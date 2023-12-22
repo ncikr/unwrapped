@@ -24,12 +24,8 @@ artist = sp.artist("066X20Nz7iquqkkCW6Jxy6")
 print(artist)
 
 
-
-
 # %%
 
 track = results['items']
-
-
 
 # %%
