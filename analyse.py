@@ -11,12 +11,43 @@ data = pd.read_csv("data\data.csv")
 
 # format dates
 data['datetime'] = pd.to_datetime(data['datetime'])
+data['year'] = data['datetime'].dt.strftime('%Y')
+data['month'] = data['datetime'].dt.strftime('%m').astype("int")
 
 # %%
-# top 50 artists
-data['year'] = data['datetime'].dt.strftime('%Y')
+## total playtime ##
 
-artists = data.groupby(["year","artist"]).size()
+# group and sum playtime
+total = data[["month", "year","ms_played"]].groupby(["month","year"])["ms_played"].sum().reset_index()
+
+total = total.sort_values('month')
+total = total.sort_values('year')
+
+# cumulative sum
+total["ms_played_cum"] = total.groupby(["month","year"])["ms_played"].cumsum()
 
 
+# %%
+## top 25 artists per year ##
 
+# group and sum playtime
+artists = data[["year","artist","ms_played"]].groupby(["year","artist"])["ms_played"].sum().reset_index()
+
+# rank playtime
+artists["year_rank"] = artists.groupby(["year"])["ms_played"].rank(method = "dense", ascending=False)
+
+# filter to top 25
+artists = artists[artists["year_rank"] <= 25]
+
+# %%
+## top 25 tracks per year ##
+
+# group and sum playtime
+tracks = data[["year","track","ms_played"]].groupby(["year","track"])["ms_played"].sum().reset_index()
+
+# rank playtime
+tracks["year_rank"] = tracks.groupby(["year"])["ms_played"].rank(method = "dense", ascending=False)
+
+# filter to top 25
+tracks = tracks[tracks["year_rank"] <= 25]
+# %%
