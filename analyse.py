@@ -12,7 +12,7 @@ data = pd.read_csv("data\data.csv")
 # format dates
 data['datetime'] = pd.to_datetime(data['datetime'])
 data['year'] = data['datetime'].dt.strftime('%Y')
-data['month'] = data['datetime'].dt.strftime('%m').astype("int")
+data['month'] = data['datetime'].dt.strftime('%m')
 
 # %%
 ## total playtime ##
@@ -20,11 +20,11 @@ data['month'] = data['datetime'].dt.strftime('%m').astype("int")
 # group and sum playtime
 total = data[["month", "year","ms_played"]].groupby(["month","year"])["ms_played"].sum().reset_index()
 
-total = total.sort_values('month')
-total = total.sort_values('year')
+# sort
+total = total.sort_values(['year', 'month'], ascending=True)
 
 # cumulative sum
-total["ms_played_cum"] = total.groupby(["month","year"])["ms_played"].cumsum()
+total['ms_played_cumulative'] = total.groupby(["year"])['ms_played'].cumsum()
 
 
 # %%
