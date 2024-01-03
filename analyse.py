@@ -95,8 +95,6 @@ total_fig.update_xaxes(title = None)
 total_fig.update_yaxes(title = None)
 total_fig.layout.legend.x = -0.3
 
-
-
 total_fig.show()
 
 
