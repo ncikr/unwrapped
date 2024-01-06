@@ -15,4 +15,5 @@ st.header("Unwrap your listening history")
 st.file_uploader("Upload your spotify streaming history files (provided by Spotify in JSON format):", accept_multiple_files=True)
 st.write("You can download your entire spotify listening history [here](https://www.spotify.com/ca-en/account/privacy/).")
 
-st.button("Analyse")
+st.button("Upload")
+
