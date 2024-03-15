@@ -6,14 +6,12 @@ import os
 import json
 import pandas as pd
 
-# %%
 # initialise variables
 
 path = os.getcwd() + "\\data"
 
 data = pd.DataFrame()
 
-# %%
 # read and combine files
 
 # iterate through all file 
@@ -29,7 +27,6 @@ for file in os.listdir(path):
 
         f.close()
 
-# %%
 # rename and filter columns
         
 data = data.rename(columns = {'ts':'datetime',
@@ -41,7 +38,6 @@ data = data[['datetime','ms_played','track',
             'artist', 'album','reason_start',
             'reason_end', 'shuffle','skipped']]
 
-# %%
 # save as csv
 
 data.to_csv("data//data.csv")
