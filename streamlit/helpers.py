@@ -3,7 +3,6 @@ import pandas as pd
 import streamlit as st
 
 
-@st.cache_data
 def load_json_files(files, exclude_incognito):
 
     # load json and convert to df
@@ -15,11 +14,11 @@ def load_json_files(files, exclude_incognito):
         data = pd.concat([data, temp])
 
     # remove podcasts
-    data = data[data['episode_name'].isnull()]
+    data = data[data.episode_name.isnull()]
 
     # filter to non-incognito plays
     if exclude_incognito:
-        data = data[data['incognito_mode'] == False]
+        data = data[data.incognito_mode == False]
 
     # rename cols
     data = data.rename(columns = {'ts':'datetime',
@@ -27,6 +26,11 @@ def load_json_files(files, exclude_incognito):
                                 'master_metadata_album_artist_name':'artist', 
                                 'master_metadata_album_album_name':'album'})
     
+    # formate datetime
+    data.datetime = pd.to_datetime(data.datetime)
+    data.year = data.datetime.dt.year
+    data.month = data.datetime.dt.month
+
     # select relevant cols        
     data = data[['datetime','ms_played','track',
                 'artist', 'album','reason_start',
@@ -34,13 +38,16 @@ def load_json_files(files, exclude_incognito):
 
     return data
 
-
 def data_summary(data):
 
     summary = {}
 
     summary['plays'] = data.shape[0]
-    summary['albums'] = data['artist'].unique().shape[0]
-    summary['artists'] = data['artist'].unique().shape[0]
+    summary['albums'] = data.artist.unique().shape[0]
+    summary['artists'] = data.album.unique().shape[0]
+
+    year_months = data.year + data.month
+
+    summary['months'] = year_months.unique().shape[0]
 
     return summary

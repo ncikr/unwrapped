@@ -27,24 +27,22 @@ uploaded = False
 
 if st.button("Upload"):
 
-    if "data" not in st.session_state:
-        st.session_state["data"] = load_json_files(files, exclude_incognito)
+    st.session_state.data = load_json_files(files, exclude_incognito)
 
-    data = st.session_state.data 
-    
+    data = st.session_state.data
+
     summary = data_summary(data)
 
-    st.info(f"Successfully uploaded {summary['plays']} plays from {summary['albums']} unique albums by {summary['artists']} unique artists.")
+    st.info(f"Successfully uploaded {summary['plays']} plays from {summary['albums']} unique albums by {summary['artists']} unique artists in {summary['months']} months.")
     
     uploaded = True
 
-    st.dataframe(data)
+    # st.dataframe(data)
 
-
-st.info("Waiting for Spotify to send you your data? Test the app with my listening history:")
 
 if not uploaded:
-    
+    st.info("Waiting for Spotify to send you your data? Test the app with my listening history:")
+
     if "use_my_data" not in st.session_state:
         use_my_data_value = False
     
@@ -59,5 +57,5 @@ if not uploaded:
     if not st.session_state.use_my_data:
         st.session_state.data = None
 
-st.markdown("Built by Nick Ross [Github](https://github.com/ncikr)")
+st.markdown("Built by Nick Ross ([Link to Github profile](https://github.com/ncikr))")
         
