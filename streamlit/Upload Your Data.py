@@ -30,6 +30,8 @@ if st.button("Upload"):
     if "data" not in st.session_state:
         st.session_state["data"] = load_json_files(files, exclude_incognito)
 
+    data = st.session_state.data 
+    
     summary = data_summary(data)
 
     st.info(f"Successfully uploaded {summary['plays']} plays from {summary['albums']} unique albums by {summary['artists']} unique artists.")
