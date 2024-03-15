@@ -41,6 +41,8 @@ else:
         "Artist": "artist",
         "Hours Played": "hours_played"
     },
+    width = 1000,
+    height = 500,
     hide_index=True,
     )
 

@@ -29,8 +29,8 @@ def load_json_files(files, exclude_incognito):
     
     # formate datetime
     data.datetime = pd.to_datetime(data.datetime)
-    data['year'] = data.datetime.dt.year.astype("text")
-    data['month'] = data.datetime.dt.month.astype("text")
+    data['year'] = data.datetime.dt.year.astype("string")
+    data['month'] = data.datetime.dt.month.astype("string")
 
     # format numeric
     data.ms_played = data.ms_played.astype("int")
@@ -90,8 +90,8 @@ def date_filter(data):
             date_to = max_date
 
         else:
-            date_from = dt.date(year_selection,1,1)
-            date_to = dt.date(year_selection,12,31)
+            date_from = dt.date(pd.to_numeric(year_selection),1,1)
+            date_to = dt.date(pd.to_numeric(year_selection),12,31)
 
     data_filtered = data[pd.to_datetime(data['datetime']).dt.date >= date_from]
     data_filtered = data[pd.to_datetime(data['datetime']).dt.date <= date_to]
