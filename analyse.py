@@ -7,7 +7,7 @@ import datetime as dt
 # %% #############################################################
 ## read data
 
-data = pd.read_csv("data\data.csv")
+data = pd.read_csv("streamlit\my_data.csv")
 
 # format dates
 data['datetime'] = pd.to_datetime(data['datetime'])
