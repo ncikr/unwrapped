@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import datetime as dt
-from helpers import date_filter
+from helpers import date_filter, get_listening_history
 
 st.set_page_config(
     page_title="Top 100",
@@ -39,30 +39,9 @@ else:
     # filter to top 100
     artists = artists[artists["rank"] <= 100].sort_values(by=['rank'])
 
-    # get history chart
-    n_dates = data.datetime.dt.date.unique().shape[0]
-
-    if n_dates < 100:
-        data['period'] = data.datetime.dt.date
-    else:
-        if n_dates < 1000:
-            data['period'] = data['datetime'].dt.strftime('%Y') + data['datetime'].dt.strftime('%m')
-        else:
-            data['period'] = data['datetime'].dt.strftime('%Y')
-
-    artists_history = data[data['artist'].isin(artists['artist'])]    
-    artists_history = artists_history[["period","artist","hours_played"]].groupby(["period", "artist"])["hours_played"].sum().reset_index()
-    artists_history.hours_played = round(artists_history.hours_played, 2)
-    
-    max_history = max(artists_history.hours_played)
-    min_history = min(artists_history.hours_played)
-
-    artists_history = artists_history.pivot(index = "artist", columns = "period", values = "hours_played").fillna(0)
-    artists_history['listening_history'] = artists_history.values.tolist()
-    artists_history = artists_history['listening_history'].reset_index()
-
-    # merge history with top 100
-    artists = artists.merge(artists_history, on = 'artist', how = 'left')
+    # append listening history
+    artist_listening_history, artist_max_history, artist_min_history = get_listening_history(data, artists, 'artist')
+    artists = artists.merge(artist_listening_history, on = 'artist', how = 'left')
 
     ## Tracks ##
 
@@ -76,7 +55,11 @@ else:
     # filter to top 100
     tracks = tracks[tracks["rank"] <= 100].sort_values(by=['rank'])
 
-    ## display ##
+    # append listening history
+    track_listening_history, track_max_history, track_min_history = get_listening_history(data, tracks, 'track')
+    tracks = tracks.merge(track_listening_history, on = ['artist','track'], how = 'left')
+
+    ## Display ##
         
     if selection == "Artists":
          st.data_editor(
@@ -88,9 +71,8 @@ else:
             "listening_history": st.column_config.LineChartColumn(
             "Listening history over period",
             width="medium",
-            help="Historical listening trend",
-            y_min=min_history,
-            y_max=max_history,
+            y_min=artist_min_history,
+            y_max=artist_max_history,
          )
         },
         width = 1000,
@@ -100,12 +82,18 @@ else:
 
     if selection == "Tracks":
          st.data_editor(
-            tracks[['rank', 'track', 'artist', 'hours_played']],
+            tracks[['rank', 'track', 'artist', 'hours_played', 'listening_history']],
             column_config={
-            "Rank": "rank",
-            "Track": "track",
-            "Artist": "artist",
-            "Hours Played": "hours_played"
+                "rank": "Rank",
+                "track": "Track",
+                "artist": "Artist",
+                "hours_played": "Hours",
+                "listening_history": st.column_config.LineChartColumn(
+                "Listening history over period",
+                width="medium",
+                y_min=track_min_history,
+                y_max=track_max_history,
+         )
         },
         width = 1000,
         height = 3600,

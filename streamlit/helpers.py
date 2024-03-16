@@ -101,3 +101,43 @@ def date_filter(data):
     data_filtered = data_filtered[pd.to_datetime(data_filtered['datetime']).dt.date <= date_to]
 
     return data_filtered
+
+
+def get_listening_history(data, data_top100, grouping = ['artist','track']):
+
+    # set time units based on length of period   
+    n_dates = data.datetime.dt.date.unique().shape[0]
+
+    if n_dates < 100:
+        data['period'] = data.datetime.dt.date
+    else:
+        if n_dates < 1000:
+            data['period'] = data['datetime'].dt.strftime('%Y') + data['datetime'].dt.strftime('%m')
+        else:
+            data['period'] = data['datetime'].dt.strftime('%Y')
+
+    # group and summarise history        
+            
+    if grouping == "artist":
+        filter_variables = ["period","artist","hours_played"]
+        grouping_variables = ['period','artist']
+        pivot_index = ['artist']
+
+    if grouping == 'track':
+        filter_variables = ["period","track","artist","hours_played"]
+        grouping_variables = ['period','artist', 'track']
+        pivot_index = ['artist', 'track']
+
+
+    data_with_history = data[data[grouping].isin(data_top100[grouping])]    
+    data_with_history = data_with_history[filter_variables].groupby(grouping_variables)["hours_played"].sum().reset_index()
+    data_with_history.hours_played = round(data_with_history.hours_played, 2)
+    
+    max_history = max(data_with_history.hours_played)
+    min_history = min(data_with_history.hours_played)
+
+    data_with_history = data_with_history.pivot(index = pivot_index, columns = "period", values = "hours_played").fillna(0)
+    data_with_history['listening_history'] = data_with_history.values.tolist()
+    data_with_history = data_with_history['listening_history'].reset_index()
+
+    return data_with_history, max_history, min_history
