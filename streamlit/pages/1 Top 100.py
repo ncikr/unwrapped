@@ -21,7 +21,7 @@ else:
     data = st.session_state.data
 
     col1, col2 = st.columns(2, gap="medium")
-    
+
     with col1:
         selection = st.radio("Choose an option:", ["Artists", "Tracks"])
 
@@ -30,7 +30,6 @@ else:
 
     ## Artists ##
 
-    # group and sum playtime by year
     artists = data[["year","artist","hours_played"]].groupby(["artist"])["hours_played"].sum().reset_index()
 
     # rank playtime
@@ -40,9 +39,34 @@ else:
     # filter to top 100
     artists = artists[artists["rank"] <= 100].sort_values(by=['rank'])
 
+    # get history chart
+    n_dates = data.datetime.dt.date.unique().shape[0]
+
+    if n_dates < 100:
+        data['period'] = data.datetime.dt.date
+    else:
+        if n_dates < 1000:
+            data['period'] = data['datetime'].dt.strftime('%Y') + data['datetime'].dt.strftime('%m')
+        else:
+            data['period'] = data['datetime'].dt.strftime('%Y')
+
+    artists_history = data[data['artist'].isin(artists['artist'])]    
+    artists_history = artists_history[["period","artist","hours_played"]].groupby(["period", "artist"])["hours_played"].sum().reset_index()
+    artists_history.hours_played = round(artists_history.hours_played, 2)
+    
+    max_history = max(artists_history.hours_played)
+    min_history = min(artists_history.hours_played)
+
+    artists_history = artists_history.pivot(index = "artist", columns = "period", values = "hours_played").fillna(0)
+    artists_history['listening_history'] = artists_history.values.tolist()
+    artists_history = artists_history['listening_history'].reset_index()
+
+    # merge history with top 100
+    artists = artists.merge(artists_history, on = 'artist', how = 'left')
+
     ## Tracks ##
 
-    # group and sum playtime by year
+    # group and sum playtime
     tracks = data[["year","artist","track","hours_played"]].groupby(["artist","track"])["hours_played"].sum().reset_index()
 
     # rank playtime
@@ -56,14 +80,21 @@ else:
         
     if selection == "Artists":
          st.data_editor(
-            artists[['rank', 'artist', 'hours_played']],
+            artists[['rank', 'artist', 'hours_played', 'listening_history']],
             column_config={
-            "Rank": "rank",
-            "Artist": "artist",
-            "Hours Played": "hours_played"
+            "rank": "Rank",
+            "artist": "Artist",
+            "hours_played": "Hours",
+            "listening_history": st.column_config.LineChartColumn(
+            "Listening history over period",
+            width="medium",
+            help="Historical listening trend",
+            y_min=min_history,
+            y_max=max_history,
+         )
         },
         width = 1000,
-        height = 7000,
+        height = 3550,
         hide_index=True,
         )
 

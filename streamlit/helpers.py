@@ -73,7 +73,7 @@ def date_filter(data):
     year_options.insert(0, "All time")
     year_options.insert(1, "Date range")
 
-    year_selection = st.selectbox("Select a year:", year_options)
+    year_selection = st.selectbox("Select a period:", year_options)
 
     if year_selection == "Date range":
         
