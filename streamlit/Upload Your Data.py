@@ -29,6 +29,8 @@ if st.button("Upload"):
 
     st.session_state.data = load_json_files(files, exclude_incognito)
 
+    st.session_state.data = data_preprocess(st.session_state.data)
+
     data = st.session_state.data
 
     summary = data_summary(data)
