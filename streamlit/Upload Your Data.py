@@ -3,7 +3,6 @@ import pandas as pd
 import datetime as dt
 from helpers import *
 
-
 st.set_page_config(
     page_title="Unwrapped",
     page_icon="🎧",
@@ -27,9 +26,9 @@ uploaded = False
 
 if st.button("Upload"):
 
-    st.session_state.data = load_json_files(files, exclude_incognito)
+    data_raw = load_json_files(files)
 
-    st.session_state.data = data_preprocess(st.session_state.data)
+    st.session_state.data = data_preprocess(data_raw, exclude_incognito)
 
     data = st.session_state.data
 
@@ -54,7 +53,8 @@ if not uploaded:
     st.session_state.use_my_data = st.toggle("Test this app using Nick's listening history", value = use_my_data_value)
 
     if st.session_state.use_my_data:
-        st.session_state.data = pd.read_csv("streamlit/my_data.csv")
+        data_raw = pd.read_csv("streamlit/my_data.csv")
+        st.session_state.data = data_preprocess(data_raw, exclude_incognito)
 
     if not st.session_state.use_my_data:
         st.session_state.data = None

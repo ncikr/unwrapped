@@ -4,7 +4,7 @@ import streamlit as st
 import datetime as dt
 
 
-def load_json_files(files, exclude_incognito):
+def load_json_files(files):
 
     # load json and convert to df
 
@@ -14,8 +14,9 @@ def load_json_files(files, exclude_incognito):
         temp = pd.DataFrame(json.load(file))
         data = pd.concat([data, temp])
 
-    # remove podcasts
-    data = data[data.episode_name.isnull()]
+    return data
+
+def data_preprocess(data, exclude_incognito):
 
     # filter to non-incognito plays
     if exclude_incognito:
@@ -26,6 +27,9 @@ def load_json_files(files, exclude_incognito):
                                 'master_metadata_track_name':'track',
                                 'master_metadata_album_artist_name':'artist', 
                                 'master_metadata_album_album_name':'album'})
+    
+    # remove podcasts
+    data = data[data.episode_name.isnull()]
     
     # formate datetime
     data.datetime = pd.to_datetime(data.datetime)
