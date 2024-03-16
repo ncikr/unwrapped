@@ -98,6 +98,6 @@ def date_filter(data):
             date_to = dt.date(pd.to_numeric(year_selection),12,31)
 
     data_filtered = data[pd.to_datetime(data['datetime']).dt.date >= date_from]
-    data_filtered = data[pd.to_datetime(data['datetime']).dt.date <= date_to]
+    data_filtered = data_filtered[pd.to_datetime(data_filtered['datetime']).dt.date <= date_to]
 
     return data_filtered
