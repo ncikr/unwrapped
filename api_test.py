@@ -1,10 +1,8 @@
-#%% libraries
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 
-#%%
 
 scope = "user-library-read"
 
@@ -18,14 +16,7 @@ for idx, item in enumerate(results['items']):
     print(idx, track['artists'][0]['name'], " – ", track['name'])
 
 
-# %%
-
 artist = sp.artist("066X20Nz7iquqkkCW6Jxy6")
 print(artist)
 
-
-# %%
-
 track = results['items']
-
-# %%

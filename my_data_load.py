@@ -30,4 +30,4 @@ data = data.drop(['username', 'platform', 'ip_addr_decrypted', 'user_agent_decry
 
 # save as csv
 
-data.to_csv("streamlit//my_data.csv")
+# data.to_csv("streamlit//my_data.csv")

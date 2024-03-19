@@ -41,7 +41,8 @@ if st.button("Upload"):
 
 
 if not uploaded:
-    st.info("Waiting for Spotify to send you your data? Test the app with my listening history:")
+    st.info("Haven't downloaded your data from Spotify yet? You can download your entire spotify listening history [here](https://www.spotify.com/ca-en/account/privacy/).")
+    st.info("In the meantime, test the app with my listening history:")
 
     if "use_my_data" not in st.session_state:
         use_my_data_value = False
@@ -54,6 +55,8 @@ if not uploaded:
     if st.session_state.use_my_data:
         data_raw = pd.read_csv("streamlit/my_data.csv")
         st.session_state.data = data_preprocess(data_raw, exclude_incognito)
+        st.info("All set! Check out the sidebar for the analysis.")
+
 
     if not st.session_state.use_my_data:
         st.session_state.data = None
