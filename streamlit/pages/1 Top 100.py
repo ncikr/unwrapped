@@ -11,7 +11,8 @@ st.set_page_config(
 st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Spotify_icon.svg/1982px-Spotify_icon.svg.png",
          width = 100)
 st.title("Spotify Unwrapped")
-st.header("Your Top 100 Artists")
+st.header("Soundtrack to your life")
+st.subheader("What have you been listening to most over the years?")
 
 
 if "data" not in st.session_state or st.session_state.data is None:
