@@ -58,5 +58,5 @@ if not uploaded:
     if not st.session_state.use_my_data:
         st.session_state.data = None
 
-st.markdown("Built by Nick Ross ([Link to Github profile](https://github.com/ncikr))")
+st.markdown("Built by Nick Ross ([GitHub Repo](https://github.com/ncikr/unwrapped))")
         
